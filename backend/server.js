@@ -16,5 +16,6 @@ app.use(express.urlencoded({ extended: false }))
 app.use(errorHandler)
 // 2. ROUTES COME AFTER
 app.use('/api/goals', require('./routes/goalRoutes'))
+app.use('/api/users', require('./routes/userRoutes'))
 
 app.listen(port, () => console.log(`Server started on port ${port}`))
