@@ -1,51 +1,36 @@
-//@desciption : get goal
-//route : GET/api/goals
-//@ access : private
+const asyncHandler = require('express-async-handler')
 
 
+const getGoals = asynchandler(async (req, res) => {
+    res.status(200).json({ message: 'Get goals' })
+})
 
-const getGoals = (req, res) => {
+const setGoal = asynchandler(async (req, res) => {
+    if(!req.body.text) {
+        return res.status(400)
 
-     res.status(200).json({ message: 'Get goals'})
+        throw new Error('Please add a text field')
+    }
 
-}
+     res.status(200).json({ message: 'set goals' })
+})
 
-//@desciption : set goal
-//route : SET/api/goals
-//@ access : private
+const updateGoal = asynchandler(async (req, res) => {
+    res.status(200).json({ message: `update goal ${req.params.id}` })
+})
 
+const getGoal = asynchandler(async (req, res) => {
+    res.status(200).json({ message: 'Get goals' })
+})
 
-
-const setGoal = (req, res) => {
-
-     res.status(200).json({ message: 'Get goals'})
-
-}
-
-//@desciption : get goal
-//route : GET/api/goals
-//@ access : private
-
-
-
-const getGoals = (req, res) => {
-
-     res.status(200).json({ message: 'Get goals'})
-
-}
-
-//@desciption : get goal
-//route : GET/api/goals
-//@ access : private
-
-
-
-const getGoals = (req, res) => {
-
-     res.status(200).json({ message: 'Get goals'})
-
-}
+const deleteGoal = asynchandler(async (req, res) => {
+    res.status(200).json({ message: `delete goal ${req.params.id}` })
+})
 
 module.exports = {
     getGoals,
+    setGoal,
+    updateGoal,
+    getGoal,
+    deleteGoal
 }
