@@ -1,14 +1,40 @@
-import {useState, useEffect} from 'react'
+import { useState, useEffect } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { toast } from 'react-toastify'
+import { FaUser } from 'react-icons/fa'
+import Spinner from '../components/spinner' // Capitalized Spinner
+import { register, reset } from "../features/auth/authslice"
 
 function Register() {
   const [formData, setFormData] = useState({
     name: '',
     email: '',
-    password: ''
+    password: '',
+    confirmPassword: '' // Fixed: Added missing state field
   })
 
+  const { name, email, password, confirmPassword } = formData
+
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
+  const { user, isLoading, isError, isSuccess, message } = useSelector((state) => state.auth)
+
+  useEffect(() => {
+    if (isError) {
+      toast.error(message)
+    }
+
+    if (isSuccess || user) {
+      navigate('/')
+    }
+
+    dispatch(reset()) // Resets auth state on redirect
+  }, [user, isError, isSuccess, message, navigate, dispatch])
+
   const handleChange = (e) => {
-    const {name, value} = e.target
+    const { name, value } = e.target
     setFormData({
       ...formData,
       [name]: value
@@ -17,13 +43,24 @@ function Register() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    // Handle form submission logic here
+    
+    if (password !== confirmPassword) {
+      toast.error('Passwords do not match')
+    } else {
+      const userData = { name, email, password }
+      dispatch(register(userData))
+    }
+  }
+
+  if (isLoading) {
+    return <Spinner /> // Fixed: Capitalized custom component
   }
 
   return (
     <>
-     <section className='heading'>
+      <section className='heading'>
         <h1>
+          <FaUser style={{ marginRight: '10px', verticalAlign: 'middle', color: '#6366f1' }} />
           Register
         </h1>
         <p>Please create an account</p>
@@ -34,34 +71,45 @@ function Register() {
           <div className='form-group'>
             <input 
               type='text'
-              className='form-control'
               id='name'
               name='name'
-              value={formData.name}
+              value={name}
               placeholder='Enter your name'
               onChange={handleChange}
+              required
             />
           </div>
           <div className='form-group'>
             <input 
               type='email'
-              className='form-control'
               id='email'
               name='email'
-              value={formData.email}
+              value={email}
               placeholder='Enter your email'
               onChange={handleChange}
+              required
             />
           </div>
           <div className='form-group'>
             <input 
               type='password'
-              className='form-control'
               id='password'
               name='password'
-              value={formData.password}
+              value={password}
               placeholder='Enter your password'
               onChange={handleChange}
+              required
+            />
+          </div>
+          <div className='form-group'>
+            <input 
+              type='password'
+              id='confirmPassword'
+              name='confirmPassword'
+              value={confirmPassword}
+              placeholder='Confirm your password'
+              onChange={handleChange}
+              required
             />
           </div>
           <div className='form-group'>
